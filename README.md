@@ -6,6 +6,7 @@ Following country currencies have `USD/currency` ratio:
 * Ireland
 * New Zealand
 * United Kingdom
+
 The rest of countries have `currency/USD` ratio.
 
 The data has following fields:
