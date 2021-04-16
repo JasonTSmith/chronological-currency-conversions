@@ -3,7 +3,7 @@
 #include "AVL.h"
 using namespace std;
 
-int main() {
+vector<AVLTree>* createAVLTrees(int capacity) {
     // Declare variables, most of which are initialized per loop iteration
     ifstream reader;
     reader.open("daily.csv");
@@ -16,14 +16,11 @@ int main() {
     float rateVal;
 
     string currentCountry = "nReal";
-    vector<AVLTree> countries;
+    vector<AVLTree>* countries = new vector<AVLTree>;
 
     // Read header line
     getline(reader, line);
 
-    // Temporary variable to control number of iterations; also used to find what %
-    // Node insertions are successful
-    int capacity = 2000;
     for (int i = 0; i < capacity; i++) {
         // Read line
         getline(reader, line);
@@ -48,27 +45,35 @@ int main() {
             // (USD/local) format while the rest are in the (local/USD)
             // So, normalize here.
             if (country == "Australia" or country == "Euro" or country == "Ireland"
-            or country == "New Zealand" or country == "United Kingdom") {
+                or country == "New Zealand" or country == "United Kingdom") {
                 rateVal = (1 / rateVal);
             }
             // Initialize new country tree if a new country is read
             if (country != currentCountry) {
                 cout << "Initialize new tree for: " << country << endl;
-                countries.push_back(AVLTree(country));
+                countries->push_back(AVLTree(country));
                 currentCountry = country;
             }
             // Insert new Node based on read data
-            countries.back().insert(dateVal, country, rateVal);
+            countries->back().insert(dateVal, country, rateVal);
         }
     }
+    return countries;
+}
+
+int main() {
+    // Temporary variable to control number of iterations; also used to find what %
+    // Node insertions are successful
+    int capacity = 2000;
+    vector<AVLTree>* countries = createAVLTrees(capacity);
     // TO DELETE - log cout should be just less than next int, which is height
     // (ensuring AVL is self-balancing correctly)
-    cout << log(countries.back().getSize())/log(2) << " < ";
-    cout << height(countries.back().getRoot()) << endl;
+    cout << log(countries->back().getSize())/log(2) << " < ";
+    cout << height(countries->back().getRoot()) << endl;
     // Total sum, esp notable out of previously defined capacity
     int sum = 0;
-    for (int i = 0; i < countries.size(); i++) {
-        sum += countries[i].getSize();
+    for (int i = 0; i < countries->size(); i++) {
+        sum += countries->at(i).getSize();
     }
     cout << float(sum)/capacity;
     // \TO DELETE
