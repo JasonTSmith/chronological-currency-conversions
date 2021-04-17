@@ -62,20 +62,79 @@ vector<AVLTree>* createAVLTrees(int capacity) {
 }
 
 int main() {
-    // Temporary variable to control number of iterations; also used to find what %
-    // Node insertions are successful
-    int capacity = 2000;
-    vector<AVLTree>* countries = createAVLTrees(capacity);
-    // TO DELETE - log cout should be just less than next int, which is height
-    // (ensuring AVL is self-balancing correctly)
-    cout << log(countries->back().getSize())/log(2) << " < ";
-    cout << height(countries->back().getRoot()) << endl;
-    // Total sum, esp notable out of previously defined capacity
-    int sum = 0;
-    for (int i = 0; i < countries->size(); i++) {
-        sum += countries->at(i).getSize();
+    int option;
+    cout << "Enter: " << endl;
+    cout << "1 for AVL Trees" << endl;
+    cout << "2 for " << endl;
+    cin >> option;
+    // Use AVL Trees
+    if (option == 1) {
+        // Temporary variable to control number of iterations; also used to find what %
+        // Node insertions are successful
+        int capacity = 10000;
+        vector<AVLTree> *countries = createAVLTrees(capacity);
+        while (option != 6) {
+            cout << "Enter: " << endl;
+            cout << "1 to convert from USD to foreign currency" << endl;
+            cout << "2 to convert from foreign currency to USD" << endl;
+            cout << "6 to quit" << endl;
+            cin >> option;
+            if (option == 1) {
+                bool countryExists = false;
+                string country;
+                int date;
+                float amount;
+                cout << "Enter country: ";
+                cin >> country;
+                for (int i = 0; i < countries->size(); i++) {
+                    if (countries->at(i).getCountry() == country) {
+                        cout << "Enter date in format YYYYMMDD: ";
+                        cin >> date;
+                        cout << "Enter amount of USD: ";
+                        cin >> amount;
+                        float conversion = countries->at(i).convertFromUSD(date, amount);
+                        cout << "Conversion of " << amount << " USD to currency in " << country << " is ";
+                        printf("%.2f",conversion);
+                        cout << endl;
+                        countryExists = true;
+                        break;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 2) {
+                bool countryExists = false;
+                string country;
+                int date;
+                float amount;
+                cout << "Enter country: ";
+                cin >> country;
+                for (int i = 0; i < countries->size(); i++) {
+                    if (countries->at(i).getCountry() == country) {
+                        cout << "Enter date in format YYYYMMDD: ";
+                        cin >> date;
+                        cout << "Enter amount of foreign currency: ";
+                        cin >> amount;
+                        float conversion = countries->at(i).convertToUSD(date, amount);
+                        cout << "Conversion of " << amount << " currency in " << country << " to USD is ";
+                        printf("%.2f",conversion);
+                        cout << endl;
+                        countryExists = true;
+                        break;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+        }
     }
-    cout << float(sum)/capacity;
-    // \TO DELETE
+    // Use second data structure, undecided
+    else if (option == 2) {
+
+    }
+    cout << "Successfully quit" << endl;
     return 0;
 }
