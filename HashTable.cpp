@@ -44,3 +44,16 @@ void HashTable::insert(int key, double value) {
     }
     table[hashedKey].push_back(make_pair(key, value));
 }
+
+// Finds key in table and deletes it
+void HashTable::remove(int key) {
+    int hashedKey = hash(key);
+    auto iter = table[hashedKey].begin();
+    for (iter; iter != table[hashedKey].end(); iter++) {
+        int date = iter->first;
+        if (date == key) {
+            table[hashedKey].erase(iter);
+            return;
+        }
+    }
+}
