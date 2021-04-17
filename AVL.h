@@ -6,7 +6,6 @@ using namespace std;
 class Node;
 int height(Node* node);
 
-// Used for student identifiers, thus has ID and name (as well as left and right for BST functionality)
 class Node {
     int date;
     string country;
@@ -40,9 +39,6 @@ public:
     int getDate() {
         return date;
     }
-    string getCountry() {
-        return country;
-    }
     float getRate() {
         return rate;
     }
@@ -51,15 +47,6 @@ public:
     }
     Node* getRight() {
         return right;
-    }
-    void setDate(int _date) {
-        date = _date;
-    }
-    void setCountry(int _country) {
-         country = _country;
-    }
-    void setRate(float _rate) {
-        rate = _rate;
     }
     void setLeft(Node* _left) {
         left = _left;
@@ -129,15 +116,6 @@ int height(Node* node) {
 
 // inOrder, preOrder, and postOrder all modify queues by reference which are used for various methods
 // such as printing, removingInorder, and finding inOrder successor
-void inOrder(Node* node, queue<Node*> &q) {
-    if (node==nullptr) {
-        return;
-    }
-    inOrder(node->getLeft(), q);
-    q.push(node);
-    inOrder(node->getRight(), q);
-}
-
 void preOrder(Node* node, queue<Node*> &q) {
     if (node==nullptr) {
         return;
@@ -145,15 +123,6 @@ void preOrder(Node* node, queue<Node*> &q) {
     q.push(node);
     preOrder(node->getLeft(), q);
     preOrder(node->getRight(), q);
-}
-
-void postOrder(Node* node, queue<Node*> &q) {
-    if (node == nullptr) {
-        return;
-    }
-    postOrder(node->getLeft(), q);
-    postOrder(node->getRight(), q);
-    q.push(node);
 }
 
 // Recursive Method - Uses preorder traversal so that lower nodes will be rotated before upper ones
@@ -192,6 +161,16 @@ Node* balance(Node* node) {
     }
 }
 
+string formatDate(int date) {
+    string toReturn = "";
+    toReturn += to_string(date % 100);
+    date /= 100;
+    toReturn = to_string(date % 100) + '/' + toReturn;
+    date /= 100;
+    toReturn += '/' + to_string(date);
+    return toReturn;
+}
+
 class AVLTree {
     Node* root;
     string country;
@@ -207,17 +186,6 @@ public:
     // Balance tree simply calls recursive balance method on root Node object
     void balanceTree() {
         root = balance(root);
-    }
-
-    // inOrderSuccessor uses inOrder queue to get Node immediately after inOrder (used for removal)
-    Node* inOrderSuccessor(Node* node) {
-        queue<Node*> q;
-        inOrder(root, q);
-        while(q.front()!=node) {
-            q.pop();
-        }
-        q.pop();
-        return q.front();
     }
 
     // Insertion method, uses binary traversal and converts string to ID to find appropriate location
@@ -262,25 +230,34 @@ public:
     }
 
     // Binary traversal by ID to find name
-    void search(int date) {
+    float search(int date) {
         Node* current = root;
 
         while(current != nullptr) {
             if (*current==date) {
-                cout << current->getDate() << endl;
-                return;
+                return current->getRate();
             }
             else if (*current > date) {
-                current = current->getLeft();
+                if (current->getLeft() != nullptr) {
+                    current = current->getLeft();
+                }
+                else {
+                    return -1 * current->getDate();
+                }
             }
-            else
-                current = current->getRight();
+            else {
+                if (current->getRight() != nullptr) {
+                    current = current->getRight();
+                }
+                else {
+                    return -1 * current->getDate();
+                }
+            }
         }
-        cout << "unsuccessful" << endl;
     }
 
     // Linear traversal using preOrder queue (although order is irrelevant) to find multiple copies of name
-    void search(float rate) {
+    void search2(float rate) {
         queue<Node*> q;
         preOrder(root, q);
         bool found = false;
@@ -293,37 +270,6 @@ public:
         }
         if(!found) {
             cout << "unsuccessful" << endl;
-        }
-    }
-
-    // Printing in different order methods uses queues (generated in helper methods)
-    // to create correct order, then uses one "print" function regardless of order
-    void printInOrder() {
-        queue<Node*> q;
-        inOrder(root, q);
-        print(q);
-    }
-
-    void printPreOrder() {
-        queue<Node*> q;
-        preOrder(root, q);
-        print(q);
-    }
-
-    void printPostOrder() {
-        queue<Node*> q;
-        postOrder(root, q);
-        print(q);
-    }
-
-    // levelCount is same as height of root, which is public Node method
-    // (0 is default if tree is empty)
-    void printLevelCount() {
-        if (root) {
-            cout << height(root) << endl;
-        }
-        else {
-            cout << 0 << endl;
         }
     }
 
@@ -343,11 +289,32 @@ public:
     Node* getRoot() {
         return root;
     }
+
     string getCountry() {
         return country;
     }
 
     int getSize() {
         return size;
+    }
+
+    float convertFromUSD(int date, float amount) {
+        float rate = search(date);
+        if (rate < -1) {
+            cout << "Data for " << formatDate(date) << " does not exist in " << country <<
+            ", but " << formatDate((-1 * rate)) << " does." << endl;
+            rate = search(-1 * rate);
+        }
+        return (amount * rate);
+    }
+
+    float convertToUSD(int date, float amount) {
+        float rate = search(date);
+        if (rate < -1) {
+            cout << "Data for " << formatDate(date) << " does not exist in " << country <<
+                 ", but " << formatDate((-1 * rate)) << " does." << endl;
+            rate = search(-1 * rate);
+        }
+        return amount / rate;
     }
 };
