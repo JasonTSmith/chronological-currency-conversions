@@ -97,8 +97,8 @@ Node* rotateLeftRight(Node *node) {
 }
 
 Node* rotateRightLeft(Node* node) {
-    node->setLeft(rotateRight(node->getRight()));
-    return rotateRight(node);
+    node->setRight(rotateRight(node->getRight()));
+    return rotateLeft(node);
 }
 
 // Get height of node; is a recursive method
@@ -123,6 +123,14 @@ void preOrder(Node* node, queue<Node*> &q) {
     q.push(node);
     preOrder(node->getLeft(), q);
     preOrder(node->getRight(), q);
+}
+void inOrder(Node* node, queue<Node*> &q) {
+    if (node==nullptr) {
+        return;
+    }
+    inOrder(node->getLeft(), q);
+    q.push(node);
+    inOrder(node->getRight(), q);
 }
 
 // Recursive Method - Uses preorder traversal so that lower nodes will be rotated before upper ones
@@ -192,11 +200,12 @@ public:
     void insert(int date, string country, float rate) {
         if (!root) {
             root = new Node(date, country, rate);
-            balanceTree();
+            size++;
             return;
         }
         else {
             Node* current = root;
+            int level = 0;
             while(current) {
                 if (*current == date) {
                     cout << "unsuccessful" << endl;
@@ -205,21 +214,25 @@ public:
                 else if (*current > date) {
                     if (current->getLeft()) {
                         current = current->getLeft();
+                        level++;
                     }
                     else {
                         current->setLeft(new Node(date, country, rate));
-                        balanceTree();
                         size++;
+                        balanceTree();
                         return;
                     }
                 }
                 else if (*current < date) {
                     if (current->getRight()) {
                         current = current->getRight();
+                        level++;
                     }
                     else {
                         current->setRight(new Node(date, country, rate));
-                        balanceTree();
+                        if (log(size)/log(2) < level) {
+                            balanceTree();
+                        }
                         size++;
                         return;
                     }
@@ -254,7 +267,6 @@ public:
                 }
             }
         }
-        return -1.0f;
     }
 
     // Linear traversal using preOrder queue (although order is irrelevant) to find multiple copies of name
@@ -303,7 +315,7 @@ public:
         float rate = search(date);
         if (rate < -1) {
             cout << "Data for " << formatDate(date) << " does not exist in " << country <<
-            ", but " << formatDate((-1 * rate)) << " does." << endl;
+                 ", but " << formatDate((-1 * rate)) << " does." << endl;
             rate = search(-1 * rate);
         }
         return (amount * rate);
