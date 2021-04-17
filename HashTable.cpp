@@ -1,5 +1,7 @@
 #include "HashTable.h"
 
+#define RESIZE_RATE 2.5f
+
 HashTable::HashTable() {
     capacity = 100;
     table.resize(capacity);
@@ -52,6 +54,11 @@ void HashTable::insert(int key, double value) {
     }
     table[hashedKey].push_back(make_pair(key, value));
     currItems++;
+
+    bool resize = updateLoadFactor();
+    if (resize) {
+        this->resize(capacity * RESIZE_RATE);
+    }
 }
 
 // Finds key in table and deletes it
@@ -63,6 +70,7 @@ void HashTable::remove(int key) {
         if (date == key) {
             table[hashedKey].erase(iter);
             currItems--;
+            updateLoadFactor();
             return;
         }
     }
@@ -79,4 +87,13 @@ void HashTable::resize(int newCapacity) {
         }
     }
     *this = newTable;
+    updateLoadFactor();
+}
+
+// Returns true if hash table needs to be resized
+bool HashTable::updateLoadFactor() {
+    loadFactor = (float) currItems / capacity;
+    if (loadFactor >= maxLoadFactor)
+        return true;
+    return false;
 }

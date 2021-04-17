@@ -13,6 +13,7 @@ class HashTable {
     vector<list<pair<int, double>>> table;
 
     void resize(int newCapacity);
+    bool updateLoadFactor();
 public:
     HashTable();
     HashTable(int capacity);
