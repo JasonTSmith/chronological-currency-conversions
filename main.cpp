@@ -1,6 +1,7 @@
 #include <fstream>
 #include <vector>
 #include "AVL.h"
+#include "HashTable.h"
 using namespace std;
 
 string cleanUpDate(string date) {
@@ -75,7 +76,7 @@ int main() {
     int option;
     cout << "Enter: " << endl;
     cout << "1 for AVL Trees" << endl;
-    cout << "2 for " << endl;
+    cout << "2 for a hash map" << endl;
     cin >> option;
     // Use AVL Trees
     if (option == 1) {
@@ -143,7 +144,7 @@ int main() {
     }
     // Use second data structure, undecided
     else if (option == 2) {
-
+        HashTable hashTable;
     }
     cout << "Successfully quit" << endl;
     return 0;
