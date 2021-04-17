@@ -20,6 +20,5 @@ public:
 
     void insert(int key, double value);
     void remove(int key);
-    string search(int key);
 };
 
