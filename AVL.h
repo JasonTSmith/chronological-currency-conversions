@@ -254,6 +254,7 @@ public:
                 }
             }
         }
+        return -1.0f;
     }
 
     // Linear traversal using preOrder queue (although order is irrelevant) to find multiple copies of name

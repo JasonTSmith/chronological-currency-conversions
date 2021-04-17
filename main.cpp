@@ -3,6 +3,16 @@
 #include "AVL.h"
 using namespace std;
 
+string cleanUpDate(string date) {
+    string res = "";
+    for (int i = 0; i < date.length(); i++) {
+        if (date[i] != '-') {
+            res += date[i];
+        }
+    }
+    return res;
+}
+
 vector<AVLTree>* createAVLTrees(int capacity) {
     // Declare variables, most of which are initialized per loop iteration
     ifstream reader;
@@ -31,7 +41,7 @@ vector<AVLTree>* createAVLTrees(int capacity) {
         }
         // Format date into integer - YYYYMMDD
         date = line.substr(0, 10);
-        date.erase(remove(date.begin(), date.end(), '-'),date.end());
+        date = cleanUpDate(date);
         dateVal = stoi(date);
         // Find second comma, separating country and rate
         // Some entries are missing this, so don't bother continuing with insertion process
