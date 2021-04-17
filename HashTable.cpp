@@ -97,3 +97,19 @@ bool HashTable::updateLoadFactor() {
         return true;
     return false;
 }
+
+float HashTable::getCurrLoadFactor() {
+    return loadFactor;
+}
+
+float HashTable::getMaxLoadFactor() {
+    return maxLoadFactor;
+}
+
+int HashTable::getCurrItems() {
+    return currItems;
+}
+
+int HashTable::getNumBuckets() {
+    return capacity;
+}

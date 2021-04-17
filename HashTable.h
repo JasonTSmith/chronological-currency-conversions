@@ -12,6 +12,7 @@ class HashTable {
     float maxLoadFactor;
     vector<list<pair<int, double>>> table;
 
+    int hash(int key);
     void resize(int newCapacity);
     bool updateLoadFactor();
 public:
@@ -20,9 +21,12 @@ public:
     HashTable(int capacity, float maxLoadFactor);
 
     bool isEmpty();
-    int hash(int key);
-
     void insert(int key, double value);
     void remove(int key);
+
+    float getCurrLoadFactor();
+    float getMaxLoadFactor();
+    int getCurrItems();
+    int getNumBuckets();
 };
 
