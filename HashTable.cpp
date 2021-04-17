@@ -3,21 +3,29 @@
 HashTable::HashTable() {
     capacity = 100;
     table.resize(capacity);
-    loadFactor = table.size() / table.capacity();
+    currItems = 0;
+    loadFactor = currItems / capacity;
+    maxLoadFactor = 4.0f;
 }
 
 HashTable::HashTable(int capacity) {
     this->capacity = capacity;
     table.resize(capacity);
-    loadFactor = table.size() / table.capacity();
+    currItems = 0;
+    loadFactor = currItems / capacity;
+    maxLoadFactor = 4.0f;
+}
+
+HashTable::HashTable(int capacity, float maxLoadFactor) {
+    this->capacity = capacity;
+    table.resize(capacity);
+    currItems = 0;
+    loadFactor = currItems / capacity;
+    this->maxLoadFactor = maxLoadFactor;
 }
 
 bool HashTable::isEmpty() {
-    for (int i = 0; i < table.size(); i++) {
-        if (!table[i].empty())
-            return false;
-    }
-    return true;
+    return (currItems == 0);
 }
 
 // Sums each digit of the date before using modulus with capacity
@@ -43,6 +51,7 @@ void HashTable::insert(int key, double value) {
         }
     }
     table[hashedKey].push_back(make_pair(key, value));
+    currItems++;
 }
 
 // Finds key in table and deletes it
@@ -53,7 +62,21 @@ void HashTable::remove(int key) {
         int date = iter->first;
         if (date == key) {
             table[hashedKey].erase(iter);
+            currItems--;
             return;
         }
     }
+}
+
+// Constructs new hash table of newCapacity size with previous values
+void HashTable::resize(int newCapacity) {
+    HashTable newTable(newCapacity);
+    // For each bucket, rehash keys and store values
+    for (int i = 0; i < table.size(); i++) {
+        auto iter = table[i].begin();
+        for (iter; iter != table[i].end(); iter++) {
+            newTable.insert(iter->first, iter->second);
+        }
+    }
+    *this = newTable;
 }
