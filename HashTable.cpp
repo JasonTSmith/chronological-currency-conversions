@@ -76,6 +76,19 @@ void HashTable::remove(int key) {
     }
 }
 
+float HashTable::operator[](int key)
+{
+    int hashedKey = hash(key);
+    auto iter = table[hashedKey].begin();
+    for (iter; iter != table[hashedKey].end(); iter++) {
+        int date = iter->first;
+        if (date == key) {
+            return iter->second;
+        }
+    }
+    return -1.0f;
+}
+
 // Constructs new hash table of newCapacity size with previous values
 void HashTable::resize(int newCapacity) {
     HashTable newTable(newCapacity);

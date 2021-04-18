@@ -24,6 +24,8 @@ public:
     void insert(int key, double value);
     void remove(int key);
 
+    float operator[](int key);
+
     float getCurrLoadFactor();
     float getMaxLoadFactor();
     int getCurrItems();
