@@ -14,6 +14,56 @@ string cleanUpDate(string date) {
     return res;
 }
 
+vector<pair<string, HashTable>> createHashTables(int capacity, float maxLoadFactor) {
+    vector<pair<string, HashTable>> res;
+    ifstream inFile("../daily.csv");
+    if (inFile.is_open()) {
+        string line, date, country, rate;
+        bool inserted;
+        int dateVal, resIndex;
+        float rateVal;
+
+        // Header line
+        getline(inFile, line);
+        while (getline(inFile, line)) {
+            inserted = false;
+            // Format date into integer - YYYYMMDD
+            date = line.substr(0, 10);
+            date = cleanUpDate(date);
+            dateVal = stoi(date);
+
+            // Find second comma, separating country and rate
+            // If rate is missing, do not insert
+            int secondIndex = line.find(',', 11);
+            if (secondIndex != string::npos and secondIndex != line.size()-1) {
+                country = line.substr(11, secondIndex - 11);
+                rate = line.substr(secondIndex + 1, line.size() - secondIndex);
+                rateVal = stof(rate);
+                // Normalize rates to be currency/USD
+                if (country == "Australia" or country == "Euro" or country == "Ireland"
+                    or country == "New Zealand" or country == "United Kingdom") {
+                    rateVal = (1 / rateVal);
+                }
+                // Check if current country has a hash table
+                // Insert a new pair if needed
+                for (int i = 0; i < res.size(); i++) {
+                    if (res[i].first == country) {
+                        res[i].second.insert(dateVal, rateVal);
+                        inserted = true;
+                        break;
+                    }
+                }
+                if (!inserted) {
+                    resIndex = res.size();
+                    res.push_back(make_pair(country, HashTable(capacity, maxLoadFactor)));
+                    res[resIndex].second.insert(dateVal, rateVal);
+                }
+            }
+        }
+    }
+    return res;
+}
+
 vector<AVLTree>* createAVLTrees(int capacity) {
     // Declare variables, most of which are initialized per loop iteration
     ifstream reader;
@@ -144,7 +194,7 @@ int main() {
     }
     // Use second data structure, undecided
     else if (option == 2) {
-        HashTable hashTable;
+        vector<pair<string, HashTable>> tableByCountry = createHashTables(2500, 4.0f);
     }
     cout << "Successfully quit" << endl;
     return 0;
