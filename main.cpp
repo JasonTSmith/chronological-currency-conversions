@@ -84,11 +84,11 @@ int main() {
         // Node insertions are successful
         int capacity = 10000;
         vector<AVLTree> *countries = createAVLTrees(capacity);
-        while (option != 6) {
+        while (option != 3) {
             cout << "Enter: " << endl;
             cout << "1 to convert from USD to foreign currency" << endl;
             cout << "2 to convert from foreign currency to USD" << endl;
-            cout << "6 to quit" << endl;
+            cout << "3 to quit" << endl;
             cin >> option;
             if (option == 1) {
                 bool countryExists = false;
