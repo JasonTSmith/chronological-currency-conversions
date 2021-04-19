@@ -199,7 +199,7 @@ int main() {
             }
         }
     }
-    // Use second data structure, undecided
+    // Use Hash Table for storage
     else if (option == 2) {
         int capacity;
         float maxLoadFactor;
@@ -234,23 +234,25 @@ int main() {
                 getline(cin, country);
                 for (int i = 0; i < tableByCountry.size(); i++) {
                     if (tableByCountry[i].first == country) {
+                        countryExists = true;
                         cout << "Enter date in format YYYY-MM-DD:" << endl;
                         cin >> date;
-                        cout << "Enter amount of USD:" << endl;
-                        cin >> amountUSD;
 
                         int accessDate = stoi(cleanUpDate(date));
-                        amountForeign =  amountUSD * tableByCountry[i].second[accessDate];
-                        if (amountForeign > 0) {
+                        double rate = tableByCountry[i].second[accessDate];
+                        if (rate > 0) {
+                            cout << "Enter amount of USD:" << endl;
+                            cin >> amountUSD;
+                            amountForeign = amountUSD * rate;
+
                             cout << "Conversion of USD$";
                             printf("%.2f", amountUSD);
                             cout << " to the currency of " << country << " is ";
                             printf("%.2f", amountForeign);
                             cout << "." << endl;
-                            countryExists = true;
                             break;
                         } else {
-                            cout << "No data exists for " << date << "." << endl;
+                            cout << "No data exists for " << date << " in " << country << "." << endl;
                         }
                     }
                 }
@@ -267,23 +269,25 @@ int main() {
                 getline(cin, country);
                 for (int i = 0; i < tableByCountry.size(); i++) {
                     if (tableByCountry[i].first == country) {
+                        countryExists = true;
                         cout << "Enter date in format YYYY-MM-DD:" << endl;
                         cin >> date;
-                        cout << "Enter amount of foreign currency:" << endl;
-                        cin >> amountForeign;
 
                         int accessDate = stoi(cleanUpDate(date));
-                        amountUSD = amountForeign / tableByCountry[i].second[accessDate];
-                        if (amountUSD > 0) {
+                        double rate = tableByCountry[i].second[accessDate];
+                        if (rate > 0) {
+                            cout << "Enter amount of foreign currency:" << endl;
+                            cin >> amountForeign;
+                            amountUSD = amountForeign / rate;
+
                             cout << "Conversion of ";
                             printf("%.2f", amountForeign);
                             cout << " in the currency of " << country << " is USD$";
                             printf("%.2f", amountUSD);
                             cout << "." << endl;
-                            countryExists = true;
                             break;
                         } else {
-                            cout << "No data exists for " << date << "." << endl;
+                            cout << "No data exists for " << date << " in " << country << "." << endl;
                         }
                     }
                 }
