@@ -28,6 +28,8 @@ string cleanUpDate(string date) {
 vector<pair<string, HashTable>> createHashTables(int capacity, float maxLoadFactor) {
     vector<pair<string, HashTable>> res;
     ifstream inFile("../daily.csv");
+    if (!inFile.is_open())
+        inFile.open("daily.csv");
     if (inFile.is_open()) {
         string line, date, country, rate;
         bool inserted;
