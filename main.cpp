@@ -76,7 +76,9 @@ vector<pair<string, HashTable>> createHashTables(int capacity, float maxLoadFact
 vector<AVLTree>* createAVLTrees(int capacity) {
     // Declare variables, most of which are initialized per loop iteration
     ifstream reader;
-    reader.open("daily.csv");
+    reader.open("../daily.csv");
+    if (!reader.is_open())
+        reader.open("daily.csv");
     string line;
     string date;
     string country;
@@ -248,7 +250,7 @@ int main() {
             }
         }
     }
-        // Use Hash Table for storage
+    // Use Hash Table for storage
     else if (option == 2) {
         int capacity;
         float maxLoadFactor;
