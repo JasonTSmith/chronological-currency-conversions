@@ -91,7 +91,7 @@ float HashTable::operator[](int key)
 
 // Constructs new hash table of newCapacity size with previous values
 void HashTable::resize(int newCapacity) {
-    HashTable newTable(newCapacity);
+    HashTable newTable(newCapacity, this->getMaxLoadFactor());
     // For each bucket, rehash keys and store values
     for (int i = 0; i < table.size(); i++) {
         auto iter = table[i].begin();
