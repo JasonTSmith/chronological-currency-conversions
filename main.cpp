@@ -206,28 +206,31 @@ int main() {
         int capacity;
         float maxLoadFactor;
 
-        cout << "Enter capacity of each hash table at start (ex. 5000):" << endl;
+        cout << "Enter capacity of each hash table at start (ex. 1000):" << endl;
         cin >> capacity;
-        cout << "Enter max load factor of each hash table (ex. 4.0):" << endl;
+        cout << "Enter max load factor of each hash table (ex. 3.0):" << endl;
         cin >> maxLoadFactor;
 
         cout << "Reading in data...";
         vector<pair<string, HashTable>> tableByCountry = createHashTables(capacity, maxLoadFactor);
         cout << "done!" << endl;
 
-        while (option != 5) {
-            string temp;
+        while (option != 8) {
             cout << endl << "Enter:" << endl;
             cout << "1 to convert from USD to foreign currency." << endl;
             cout << "2 to convert from foreign currency to USD." << endl;
             cout << "3 to find date when a foreign currency was MOST valuable (compared to USD)." << endl;
             cout << "4 to find date when a foreign currency was LEAST valuable (compared to USD)." << endl;
-            cout << "5 to quit." << endl;
+            cout << "5 to add a conversion rate." << endl;
+            cout << "6 to remove a conversion rate." << endl;
+            cout << "7 to print hash table statistics for a country." << endl;
+            cout << "8 to quit." << endl;
             cin >> option;
 
             // Clears space from cin after choosing option
+            string temp;
             getline(cin, temp);
-            if (option == 1) {
+            if (option == 1) { // USD to foreign
                 bool countryExists = false;
                 string country;
                 string date;
@@ -262,7 +265,7 @@ int main() {
                     cout << "No data exists for " << country << "." << endl;
                 }
             }
-            else if (option == 2) {
+            else if (option == 2) { // foreign to USD
                 bool countryExists = false;
                 string country;
                 string date;
@@ -297,7 +300,7 @@ int main() {
                     cout << "No data exists for " << country << "." << endl;
                 }
             }
-            else if (option == 3) {
+            else if (option == 3) { // Find most valuable date for currency
                 bool countryExists = false;
                 string country;
                 int date;
@@ -329,7 +332,7 @@ int main() {
                     cout << "No data exists for " << country << "." << endl;
                 }
             }
-            else if (option == 4) {
+            else if (option == 4) { // Find least valuable date for currency
                 bool countryExists = false;
                 string country;
                 int date;
@@ -359,6 +362,90 @@ int main() {
                 }
                 if (!countryExists) {
                     cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 5) { // Adds a new conversion rate to table
+                bool countryExists = false;
+                string country, date;
+                double conversionRate;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        HashTable& table = tableByCountry[i].second;
+                        countryExists = true;
+                        cout << "Enter date in format YYYY-MM-DD:" << endl;
+                        cin >> date;
+                        cout << "Enter conversion rate (currency/USD):" << endl;
+                        cin >> conversionRate;
+
+                        table.insert(stoi(cleanUpDate(date)), conversionRate);
+                    }
+                }
+                if (!countryExists) {
+                    int index = tableByCountry.size();
+                    tableByCountry.push_back(make_pair(country, HashTable(capacity, maxLoadFactor)));
+                    HashTable& table = tableByCountry[index].second;
+
+                    cout << "Enter date in format YYYY-MM-DD:" << endl;
+                    cin >> date;
+                    cout << "Enter conversion rate (currency/USD):" << endl;
+                    cin >> conversionRate;
+
+                    table.insert(stoi(cleanUpDate(date)), conversionRate);
+                }
+            }
+            else if (option == 6) { // Removes conversion rate from table by date
+                bool countryExists = false;
+                string country, date;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        HashTable& table = tableByCountry[i].second;
+                        countryExists = true;
+
+                        cout << "Enter date in format YYYY-MM-DD:" << endl;
+                        cin >> date;
+
+                        table.remove(stoi(cleanUpDate(date)));
+                        cout << "Success!" << endl;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 7) { // Prints stats for specified country or all countries
+                bool countryExists = false;
+                string country;
+                cout << "Enter country (or \"all\"):" << endl;
+                getline(cin, country);
+                if (country != "all") {
+                    for (int i = 0; i < tableByCountry.size(); i++) {
+                        if (tableByCountry[i].first == country) {
+                            HashTable table = tableByCountry[i].second;
+                            countryExists = true;
+
+                            cout << "Current items: " << table.getCurrItems() << endl;
+                            cout << "Current buckets: " << table.getNumBuckets() << endl;
+                            cout << "Current load factor: " << table.getCurrLoadFactor() << endl;
+                            cout << "Maximum load factor: " << table.getMaxLoadFactor() << endl;
+                        }
+                    }
+                    if (!countryExists) {
+                        cout << "No data exists for " << country << "." << endl;
+                    }
+                }
+                else { // Prints stats for each country
+                    for (int i = 0; i < tableByCountry.size(); i++) {
+                        HashTable table = tableByCountry[i].second;
+                        cout << "Stats for " << tableByCountry[i].first << "'s table:" << endl;
+                        cout << "\tCurrent items: " << table.getCurrItems() << endl;
+                        cout << "\tCurrent buckets: " << table.getNumBuckets() << endl;
+                        cout << "\tCurrent load factor: " << table.getCurrLoadFactor() << endl;
+                        cout << "\tMaximum load factor: " << table.getMaxLoadFactor() << endl;
+                    }
                 }
             }
         }
