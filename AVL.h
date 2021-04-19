@@ -269,21 +269,34 @@ public:
         }
     }
 
-    // Linear traversal using preOrder queue (although order is irrelevant) to find multiple copies of name
-    void search2(float rate) {
+    /// Linear traversal using preOrder queue to find minimum conversion rate
+    float mostValRate(float rate) {
         queue<Node*> q;
         preOrder(root, q);
-        bool found = false;
+        float mVR = q.front()->getRate();
+        q.pop();
         while(!q.empty()) {
-            if (q.front()->getRate() == rate) {
-                cout << q.front()->getRate() << endl;
-                found = true;
+            if (q.front()->getRate() < mVR) {
+                mVR = q.front()->getRate();
             }
             q.pop();
         }
-        if(!found) {
-            cout << "unsuccessful" << endl;
+        return mVR;
+    }
+
+    // Linear traversal using preOrder queue to find minimum conversion rate
+    float leastValRate(float rate) {
+        queue<Node*> q;
+        preOrder(root, q);
+        float lVR = q.front()->getRate();
+        q.pop();
+        while(!q.empty()) {
+            if (q.front()->getRate() < lVR) {
+                lVR = q.front()->getRate();
+            }
+            q.pop();
         }
+        return lVR;
     }
 
     // Simple print method iterates through queues created by one of three
