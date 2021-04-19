@@ -1,5 +1,6 @@
 #include <iostream>
 #include <queue>
+#include <math.h>
 using namespace std;
 
 // Declare Node and height early, as the two each reference each other
