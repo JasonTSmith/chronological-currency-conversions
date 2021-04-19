@@ -16,7 +16,7 @@ public:
     // Default constructor, although this should never be used as an empty node
     // is not part of the functionality
     Node() {};
-    // Constructor that should be the only one used for inserting students
+    // Constructor that should be the only one used for inserting dates
     Node(int _date, string _country, float _rate, Node* _left=nullptr, Node* _right=nullptr) {
         date = _date;
         country= _country;
@@ -184,7 +184,7 @@ class AVLTree {
     string country;
     int size;
 public:
-    // Default and sole constructor; essentially does nothing (except creating a Tree object)
+    // Sole constructor
     AVLTree(string _country) {
         root = nullptr;
         country = _country;
@@ -196,7 +196,7 @@ public:
         root = balance(root);
     }
 
-    // Insertion method, uses binary traversal and converts string to ID to find appropriate location
+    // Insertion method, uses binary traversal and uses date to find appropriate location
     void insert(int date, string country, float rate) {
         if (!root) {
             root = new Node(date, country, rate);
@@ -218,8 +218,10 @@ public:
                     }
                     else {
                         current->setLeft(new Node(date, country, rate));
+                        if (log(size)/log(2) < level) {
+                            balanceTree();
+                        }
                         size++;
-                        balanceTree();
                         return;
                     }
                 }
@@ -242,7 +244,7 @@ public:
         cout << "unsuccessful" << endl;
     }
 
-    // Binary traversal by ID to find name
+    // Binary traversal by date to find rate
     float search(int date) {
         Node* current = root;
 
@@ -269,61 +271,41 @@ public:
         }
     }
 
-    /// Linear traversal using preOrder queue to find minimum conversion rate
-    float mostValRate(float rate) {
+    // Linear traversal using preOrder queue to find minimum conversion rate
+    Node* mostValRate() {
         queue<Node*> q;
         preOrder(root, q);
-        float mVR = q.front()->getRate();
+        Node* mVR = q.front();
         q.pop();
         while(!q.empty()) {
-            if (q.front()->getRate() < mVR) {
-                mVR = q.front()->getRate();
+            if (q.front()->getRate() < mVR->getRate()) {
+                mVR = q.front();
             }
             q.pop();
         }
         return mVR;
     }
 
-    // Linear traversal using preOrder queue to find minimum conversion rate
-    float leastValRate(float rate) {
+    // Linear traversal using preOrder queue to find maximum conversion rate
+    Node* leastValRate() {
         queue<Node*> q;
         preOrder(root, q);
-        float lVR = q.front()->getRate();
+        Node* mVR = q.front();
         q.pop();
         while(!q.empty()) {
-            if (q.front()->getRate() < lVR) {
-                lVR = q.front()->getRate();
+            if (q.front()->getRate() > mVR->getRate()) {
+                mVR = q.front();
             }
             q.pop();
         }
-        return lVR;
-    }
-
-    // Simple print method iterates through queues created by one of three
-    // standard traversal methods and prints with proper formatting
-    void print(queue<Node*> q) {
-        while(!q.empty()) {
-            cout << q.front()->getDate() << ": " << q.front()->getRate();
-            q.pop();
-            if (!q.empty()) {
-                cout << endl;
-            }
-        }
-        cout << endl;
-    }
-
-    Node* getRoot() {
-        return root;
+        return mVR;
     }
 
     string getCountry() {
         return country;
     }
 
-    int getSize() {
-        return size;
-    }
-
+    // Search BST for date, then use rate to multiply
     float convertFromUSD(int date, float amount) {
         float rate = search(date);
         if (rate < -1) {
