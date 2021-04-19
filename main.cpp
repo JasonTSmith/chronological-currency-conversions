@@ -4,6 +4,17 @@
 #include "HashTable.h"
 using namespace std;
 
+string formatIntDate(int date) {
+    string res, temp = to_string(date);
+    for (int i = 0; i < temp.size(); i++) {
+        // Inserts dashes
+        if (res.size() == 4 || res.size() == 7)
+            res += '-';
+        res += temp[i];
+    }
+    return res;
+}
+
 string cleanUpDate(string date) {
     string res = "";
     for (int i = 0; i < date.length(); i++) {
@@ -39,11 +50,7 @@ vector<pair<string, HashTable>> createHashTables(int capacity, float maxLoadFact
                 country = line.substr(11, secondIndex - 11);
                 rate = line.substr(secondIndex + 1, line.size() - secondIndex);
                 rateVal = stof(rate);
-                // Normalize rates to be currency/USD
-                if (country == "Australia" or country == "Euro" or country == "Ireland"
-                    or country == "New Zealand" or country == "United Kingdom") {
-                    rateVal = (1 / rateVal);
-                }
+
                 // Check if current country has a hash table
                 // Insert a new pair if needed
                 for (int i = 0; i < res.size(); i++) {
@@ -204,17 +211,19 @@ int main() {
 
         cout << "Reading in data...";
         vector<pair<string, HashTable>> tableByCountry = createHashTables(capacity, maxLoadFactor);
-        cout << "done!" << endl << endl;
+        cout << "done!" << endl;
 
-        while (option != 6) {
+        while (option != 5) {
             string temp;
-            cout << "Enter: " << endl;
-            cout << "1 to convert from USD to foreign currency" << endl;
-            cout << "2 to convert from foreign currency to USD" << endl;
-            cout << "6 to quit" << endl;
+            cout << endl << "Enter:" << endl;
+            cout << "1 to convert from USD to foreign currency." << endl;
+            cout << "2 to convert from foreign currency to USD." << endl;
+            cout << "3 to find date when a foreign currency was MOST valuable (compared to USD)." << endl;
+            cout << "4 to find date when a foreign currency was LEAST valuable (compared to USD)." << endl;
+            cout << "5 to quit." << endl;
             cin >> option;
 
-            // Clears space from cin
+            // Clears space from cin after choosing option
             getline(cin, temp);
             if (option == 1) {
                 bool countryExists = false;
@@ -237,7 +246,7 @@ int main() {
                             printf("%.2f", amountUSD);
                             cout << " to the currency of " << country << " is ";
                             printf("%.2f", amountForeign);
-                            cout << endl;
+                            cout << "." << endl;
                             countryExists = true;
                             break;
                         } else {
@@ -248,7 +257,8 @@ int main() {
                 if (!countryExists) {
                     cout << "No data exists for " << country << "." << endl;
                 }
-            } else if (option == 2) {
+            }
+            else if (option == 2) {
                 bool countryExists = false;
                 string country;
                 string date;
@@ -269,12 +279,76 @@ int main() {
                             printf("%.2f", amountForeign);
                             cout << " in the currency of " << country << " is USD$";
                             printf("%.2f", amountUSD);
-                            cout << endl;
+                            cout << "." << endl;
                             countryExists = true;
                             break;
                         } else {
                             cout << "No data exists for " << date << "." << endl;
                         }
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 3) {
+                bool countryExists = false;
+                string country;
+                int date;
+                double mostValuableRate = INFINITY;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        HashTable table = tableByCountry[i].second;
+                        countryExists = true;
+
+                        // Most valuable rate is when less in foreign currency gets same/more of USD
+                        int earliest = 19700101, latest = 20181231;
+                        for (int j = earliest; j < latest; j++) {
+                            if (table[j] > 0 && table[j] < mostValuableRate) {
+                                mostValuableRate = table[j];
+                                date = j;
+                            }
+                        }
+                        cout << "The most valuable date for the currency of " << country << " is " << formatIntDate(date) << "." << endl;
+
+                        float amountForeign = 1000.0f * table[date];
+                        cout << "USD$1000 converted was ";
+                        printf("%.2f", amountForeign);
+                        cout << " in that currency." << endl;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 4) {
+                bool countryExists = false;
+                string country;
+                int date;
+                double leastValuableRate = 0;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        HashTable table = tableByCountry[i].second;
+                        countryExists = true;
+
+                        // Least valuable rate is when more in foreign currency gets same/less of USD
+                        int earliest = 19700101, latest = 20181231;
+                        for (int j = earliest; j < latest; j++) {
+                            if (table[j] > 0 && table[j] > leastValuableRate) {
+                                leastValuableRate = table[j];
+                                date = j;
+                            }
+                        }
+                        cout << "The least valuable date for the currency of " << country << " is " << formatIntDate(date) << "." << endl;
+
+                        float amountForeign = 1000.0f * table[date];
+                        cout << "USD$1000 converted was ";
+                        printf("%.2f", amountForeign);
+                        cout << " in that currency." << endl;
                     }
                 }
                 if (!countryExists) {
