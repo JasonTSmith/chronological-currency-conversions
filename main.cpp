@@ -134,13 +134,15 @@ int main() {
     if (option == 1) {
         // Temporary variable to control number of iterations; also used to find what %
         // Node insertions are successful
-        int capacity = 10000;
+        int capacity = 229136;
         vector<AVLTree> *countries = createAVLTrees(capacity);
-        while (option != 3) {
+        while (option != 5) {
             cout << "Enter: " << endl;
             cout << "1 to convert from USD to foreign currency" << endl;
             cout << "2 to convert from foreign currency to USD" << endl;
-            cout << "3 to quit" << endl;
+            cout << "3 to find date when a foreign currency was MOST valuable (compared to USD)." << endl;
+            cout << "4 to find date when a foreign currency was LEAST valuable (compared to USD)." << endl;
+            cout << "5 to quit" << endl;
             cin >> option;
             if (option == 1) {
                 bool countryExists = false;
@@ -192,9 +194,61 @@ int main() {
                     cout << "No data exists for " << country << "." << endl;
                 }
             }
+            else if (option == 3) { // Find most valuable date for currency
+                bool countryExists = false;
+                string country;
+                int date;
+                Node* mostValuableRate;
+                cout << "Enter country:" << endl;
+                cin >> country;
+                for (int i = 0; i < countries->size(); i++) {
+                    if (countries->at(i).getCountry() == country) {
+                        countryExists = true;
+
+                        // Most valuable rate is when less in foreign currency gets same/more of USD
+                        mostValuableRate = countries->at(i).mostValRate();
+                        cout << "The most valuable date for the currency of " << country << " is " <<
+                        formatIntDate(mostValuableRate->getDate()) << "." << endl;
+
+                        float amountForeign = 1000.0f * mostValuableRate->getRate();
+                        cout << "USD$1000 converted was ";
+                        printf("%.2f", amountForeign);
+                        cout << " in that currency." << endl;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+            else if (option == 4) { // Find most valuable date for currency
+                bool countryExists = false;
+                string country;
+                int date;
+                Node* leastValuableRate;
+                cout << "Enter country:" << endl;
+                cin >> country;
+                for (int i = 0; i < countries->size(); i++) {
+                    if (countries->at(i).getCountry() == country) {
+                        countryExists = true;
+
+                        // Most valuable rate is when less in foreign currency gets same/more of USD
+                        leastValuableRate = countries->at(i).leastValRate();
+                        cout << "The least valuable date for the currency of " << country << " is " <<
+                             formatIntDate(leastValuableRate->getDate()) << "." << endl;
+
+                        float amountForeign = 1000.0f * leastValuableRate->getRate();
+                        cout << "USD$1000 converted was ";
+                        printf("%.2f", amountForeign);
+                        cout << " in that currency." << endl;
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
         }
     }
-    // Use Hash Table for storage
+        // Use Hash Table for storage
     else if (option == 2) {
         int capacity;
         float maxLoadFactor;
