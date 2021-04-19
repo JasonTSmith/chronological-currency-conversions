@@ -194,7 +194,94 @@ int main() {
     }
     // Use second data structure, undecided
     else if (option == 2) {
-        vector<pair<string, HashTable>> tableByCountry = createHashTables(2500, 4.0f);
+        int capacity;
+        float maxLoadFactor;
+
+        cout << "Enter capacity of each hash table at start (ex. 5000):" << endl;
+        cin >> capacity;
+        cout << "Enter max load factor of each hash table (ex. 4.0):" << endl;
+        cin >> maxLoadFactor;
+
+        cout << "Reading in data...";
+        vector<pair<string, HashTable>> tableByCountry = createHashTables(capacity, maxLoadFactor);
+        cout << "done!" << endl << endl;
+
+        while (option != 6) {
+            string temp;
+            cout << "Enter: " << endl;
+            cout << "1 to convert from USD to foreign currency" << endl;
+            cout << "2 to convert from foreign currency to USD" << endl;
+            cout << "6 to quit" << endl;
+            cin >> option;
+
+            // Clears space from cin
+            getline(cin, temp);
+            if (option == 1) {
+                bool countryExists = false;
+                string country;
+                string date;
+                float amountUSD, amountForeign;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        cout << "Enter date in format YYYY-MM-DD:" << endl;
+                        cin >> date;
+                        cout << "Enter amount of USD:" << endl;
+                        cin >> amountUSD;
+
+                        int accessDate = stoi(cleanUpDate(date));
+                        amountForeign =  amountUSD * tableByCountry[i].second[accessDate];
+                        if (amountForeign > 0) {
+                            cout << "Conversion of USD$";
+                            printf("%.2f", amountUSD);
+                            cout << " to the currency of " << country << " is ";
+                            printf("%.2f", amountForeign);
+                            cout << endl;
+                            countryExists = true;
+                            break;
+                        } else {
+                            cout << "No data exists for " << date << "." << endl;
+                        }
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            } else if (option == 2) {
+                bool countryExists = false;
+                string country;
+                string date;
+                float amountUSD, amountForeign;
+                cout << "Enter country:" << endl;
+                getline(cin, country);
+                for (int i = 0; i < tableByCountry.size(); i++) {
+                    if (tableByCountry[i].first == country) {
+                        cout << "Enter date in format YYYY-MM-DD:" << endl;
+                        cin >> date;
+                        cout << "Enter amount of foreign currency:" << endl;
+                        cin >> amountForeign;
+
+                        int accessDate = stoi(cleanUpDate(date));
+                        amountUSD = amountForeign / tableByCountry[i].second[accessDate];
+                        if (amountUSD > 0) {
+                            cout << "Conversion of ";
+                            printf("%.2f", amountForeign);
+                            cout << " in the currency of " << country << " is USD$";
+                            printf("%.2f", amountUSD);
+                            cout << endl;
+                            countryExists = true;
+                            break;
+                        } else {
+                            cout << "No data exists for " << date << "." << endl;
+                        }
+                    }
+                }
+                if (!countryExists) {
+                    cout << "No data exists for " << country << "." << endl;
+                }
+            }
+        }
     }
     cout << "Successfully quit" << endl;
     return 0;
