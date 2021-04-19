@@ -76,7 +76,7 @@ void HashTable::remove(int key) {
     }
 }
 
-float HashTable::operator[](int key)
+double HashTable::operator[](int key)
 {
     int hashedKey = hash(key);
     auto iter = table[hashedKey].begin();
@@ -86,7 +86,7 @@ float HashTable::operator[](int key)
             return iter->second;
         }
     }
-    return -1.0f;
+    return -1.0;
 }
 
 // Constructs new hash table of newCapacity size with previous values
