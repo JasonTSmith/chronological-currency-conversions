@@ -111,13 +111,6 @@ vector<AVLTree>* createAVLTrees(int capacity) {
             country = line.substr(11, secondIndex - 11);
             rate = line.substr(secondIndex + 1, line.size() - secondIndex);
             rateVal = stof(rate);
-            // Annoyingly, 5 countries are stored in the
-            // (USD/local) format while the rest are in the (local/USD)
-            // So, normalize here.
-            if (country == "Australia" or country == "Euro" or country == "Ireland"
-                or country == "New Zealand" or country == "United Kingdom") {
-                rateVal = (1 / rateVal);
-            }
             // Initialize new country tree if a new country is read
             if (country != currentCountry) {
                 cout << "Initialize new tree for: " << country << endl;
